@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Eligibility Predictor</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 40px; background-color: #f0f2f5; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        h2 { text-align: center; color: #1a73e8; }
+        label { font-weight: 600; display: block; margin-top: 12px; font-size: 14px; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #1a73e8; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 20px; transition: 0.3s; }
+        button:hover { background-color: #1557b0; }
+        #result { margin-top: 20px; text-align: center; font-size: 1.2em; font-weight: bold; min-height: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🏦 Loan Predictor</h2>
+        <form id="loanForm">
+            <label>Applicant Income ($)</label>
+            <input type="number" id="ApplicantIncome" value="6000" required>
+            
+            <label>Coapplicant Income ($)</label>
+            <input type="number" id="CoapplicantIncome" value="2000" required>
+            
+            <label>Loan Amount ($)</label>
+            <input type="number" id="LoanAmount" value="100" required>
+            
+            <label>Credit History</label>
+            <select id="Credit_History">
+                <option value="1">Good (1.0)</option>
+                <option value="0">Poor (0.0)</option>
+            </select>
+            
+            <label>Property Area</label>
+            <select id="Property_Area">
+                <option value="1">Semiurban</option>
+                <option value="2">Urban</option>
+                <option value="0">Rural</option>
+            </select>
+
+            <button type="submit">Check Status</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('loanForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const res = document.getElementById('result');
+            res.innerText = "Checking...";
+            
+            const payload = {
+                // Numeric inputs from UI
+                ApplicantIncome: parseFloat(document.getElementById('ApplicantIncome').value),
+                CoapplicantIncome: parseFloat(document.getElementById('CoapplicantIncome').value),
+                LoanAmount: parseFloat(document.getElementById('LoanAmount').value),
+                Credit_History: parseFloat(document.getElementById('Credit_History').value),
+                Property_Area: parseInt(document.getElementById('Property_Area').value),
+                
+                // Hardcoded defaults to complete the feature list
+                Gender: 1,      // Male (Encoded)
+                Married: 1,     // Yes (Encoded)
+                Dependents: 0,  // 0 (Encoded)
+                Education: 0,   // Graduate (Encoded)
+                Self_Employed: 0, // No (Encoded)
+                Loan_Amount_Term: 360
+            };
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            
+            res.innerText = "Status: " + data.loan_status;
+            res.style.color = data.loan_status === "Approved" ? "#28a745" : "#dc3545";
+        };
+    </script>
+</body>
+</html>
