@@ -3,7 +3,7 @@
 This is a full-stack Machine Learning web application that predicts whether a loan applicant is eligible for a loan based on various financial and demographic factors. 
 
 ## 🚀 Live Demo
-[Paste your Render Link here once it's live]
+https://huggingface.co/spaces/Imranumw123/loan-eligibility-predictor
 
 ## 🛠️ Features
 - **Accurate Predictions:** Uses a Random Forest Classifier trained on historical housing finance data.
